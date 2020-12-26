@@ -43,7 +43,7 @@ static __attribute((always_inline)) inline __m128i vvc_rgb2yuv_calc(__m128i sse_
     // 00 00 00 00 00 00 G5 00 B6 00 G6 00 B7 00 G7 00
     sse_lhbg = _mm_or_si128(sse_lhbg, _mm_shuffle_epi8(sse_src2, _mm_setr_epi8(-1, -1, -1, -1, -1, -1, 0, -1, 2, -1, 3, -1, 5, -1, 6, -1)));
     // B8 00 G8 00 B9 00 G9 00 BA 00 GA 00 00 00 00 00
-    __m128i sse_hlbg = _mm_shuffle_epi8(sse_src1, _mm_setr_epi8(8, -1, 9, -1, 11, -1, 12, -1, 14, -1, 15, -1, -1, -1, -1, -1));
+    __m128i sse_hlbg = _mm_shuffle_epi8(sse_src2, _mm_setr_epi8(8, -1, 9, -1, 11, -1, 12, -1, 14, -1, 15, -1, -1, -1, -1, -1));
     // 00 00 00 00 00 00 00 00 00 00 00 00 BB 00 GB 00
     sse_hlbg = _mm_or_si128(sse_hlbg, _mm_shuffle_epi8(sse_src3, _mm_setr_epi8(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, -1, 2, -1)));
     // BC 00 GC 00 BD 00 GD 00 BE 00 GE 00 BF 00 GF 00
@@ -62,6 +62,10 @@ static __attribute((always_inline)) inline __m128i vvc_rgb2yuv_calc(__m128i sse_
     // 00 00 RC 00 00 00 RD 00 00 00 RE 00 00 00 RF 00
     __m128i sse_hhcr = _mm_shuffle_epi8(sse_src3, _mm_setr_epi8(-1, -1, 6, -1, -1, -1, 9, -1, -1, -1, 12, -1, -1, -1, 15, -1));
 
+    sse_llcr = _mm_or_si128(sse_llcr, sse_cmask);
+    sse_lhcr = _mm_or_si128(sse_lhcr, sse_cmask);
+    sse_hlcr = _mm_or_si128(sse_hlcr, sse_cmask);
+    sse_hhcr = _mm_or_si128(sse_hhcr, sse_cmask);
 
     switch (calctype) {
     case vvc_sse_calcgroup_type_y:
@@ -72,21 +76,11 @@ static __attribute((always_inline)) inline __m128i vvc_rgb2yuv_calc(__m128i sse_
     case vvc_sse_calcgroup_type_u:
         sse_bgw = _mm_setr_epi16(4096, -2711, 4096, -2711, 4096, -2711, 4096, -2711);
         sse_crw = _mm_setr_epi16(8192, -1384, 8192, -1384, 8192, -1384, 8192, -1384);
-
-        sse_llcr = _mm_or_si128(sse_llcr, sse_cmask);
-        sse_lhcr = _mm_or_si128(sse_lhcr, sse_cmask);
-        sse_hlcr = _mm_or_si128(sse_hlcr, sse_cmask);
-        sse_hhcr = _mm_or_si128(sse_hhcr, sse_cmask);
         break;
 
     case vvc_sse_calcgroup_type_v:
         sse_bgw = _mm_setr_epi16(-663, -3432, -663, -3432, -663, -3432, -663, -3432);
         sse_crw = _mm_setr_epi16(8192, 4096, 8192, 4096, 8192, 4096, 8192, 4096);
-
-        sse_llcr = _mm_or_si128(sse_llcr, sse_cmask);
-        sse_lhcr = _mm_or_si128(sse_lhcr, sse_cmask);
-        sse_hlcr = _mm_or_si128(sse_hlcr, sse_cmask);
-        sse_hhcr = _mm_or_si128(sse_hhcr, sse_cmask);
         break;
 
     default:
@@ -136,8 +130,6 @@ static __attribute((always_inline)) inline __m128i vvc_yuyv2rgb(__m128i sse_src1
     __m128i sse_hlcv = _mm_shuffle_epi8(sse_src2, _mm_setr_epi8(-1, -1, 3, -1, -1, -1, 3, -1, -1, -1, 7, -1, -1, -1, 7, -1));
     // 00 00 V6 00 00 00 V6 00 00 00 V7 00 00 00 V7 00
     __m128i sse_hhcv = _mm_shuffle_epi8(sse_src2, _mm_setr_epi8(-1, -1, 11, -1, -1, -1, 11, -1, -1, -1, 15, -1, -1, -1, 15, -1));
-
-    printf("%d\n", *(uint8_t *) &sse_src2);
 
     sse_llcv = _mm_or_si128(sse_llcv, sse_csub);
     sse_lhcv = _mm_or_si128(sse_lhcv, sse_csub);
