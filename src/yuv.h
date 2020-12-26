@@ -72,4 +72,6 @@ static inline uint32_t vvc_yuv_spschroma_formatted_size(const uint32_t w, const 
 
 int vvc_rgb2yuv(uint8_t *const out, uint32_t outlen, vvc_rgb_graph_t *const rgb_graph, const vvc_yuv_format_t format);
 
+int vvc_yuv2rgb(vvc_rgb_graph_t *const rgb_graph, uint8_t *const in, const vvc_yuv_format_t format);
+
 #endif
